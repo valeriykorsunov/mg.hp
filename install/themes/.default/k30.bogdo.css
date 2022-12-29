@@ -1,0 +1,5 @@
+/*Old menu icon and title*/
+#k30_bogdo_menu_icon {background-image:url(icons/k30.bogdo/menu.png);}
+
+/*Menu icon BX12*/
+.k30_bogdo_menu_icon {background:url(icons/k30.bogdo/menu.png) 10px 5px no-repeat !important;}
