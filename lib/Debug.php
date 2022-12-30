@@ -1,6 +1,6 @@
 <?
 
-namespace Bogdo;
+namespace MG\HP;
 
 
 class Debug

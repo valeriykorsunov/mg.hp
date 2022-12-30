@@ -1,26 +1,26 @@
 <?
-
 use \Bitrix\Main\Localization\Loc;
+use MG\HP\Main\ModuleOptions;
 use \Bitrix\Main\Page\Asset;
-
 require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_before.php");
-require_once(dirname(__FILE__) . "/prolog.php");
-
+// require_once(dirname(__FILE__) . "/prolog.php");
 CUtil::InitJSCore(array('window'));
-
 Loc::loadMessages(__FILE__);
 IncludeModuleLangFile(__FILE__);
 
-$userTabList = \K30\Bogdo\ModuleOptions::GetTabsList();
-
-$APPLICATION->SetTitle("Настройки K30_BOGDO");
+$APPLICATION->SetTitle("Настройки MG Helper");
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
 ?>
 
 
 <?
 $aTabs = array(
-	array("DIV" => "edit1", "TAB" => "Пользовательские настройки", "ICON" => "", "TITLE" => "Пользовательские настройки"),
+	array(
+		"DIV" => "edit1", 
+		"TAB" => "Пользовательские настройки", 
+		"ICON" => "", 
+		"TITLE" => "Пользовательские настройки"
+	),
 	// array("DIV" => "editEnd", "TAB" => "Прочие настройки", "ICON" => "", "TITLE" => "Прочие настройки")
 );
 
@@ -30,10 +30,11 @@ $tabControl->Begin();
 
 <form method="post" action="<? echo $APPLICATION->GetCurPage() ?>?&lang=<?= LANGUAGE_ID ?>&mid=k30.bogdo" enctype="multipart/form-data">
 	<?= bitrix_sessid_post() ?>
-	<? $tabControl->BeginNextTab(); ?>
-
-	<? K30\Bogdo\ModuleOptions::ShowInstructionProperty() ?>
-	<? K30\Bogdo\ModuleOptions::ShowButtonNewProperty() ?>
+	<? 
+	$tabControl->BeginNextTab();
+	ModuleOptions::ShowInstructionProperty();
+	ModuleOptions::ShowButtonNewProperty();
+	?>
 
 	<!-- Вкладки начало -->
 
@@ -50,8 +51,9 @@ $tabControl->Begin();
 					</tr>
 				</thead>
 				<tbody class="js-tabs">
+					<?$userTabList = ModuleOptions::GetTabsList();?>
 					<?foreach($userTabList as $item):?>
-						<?= \K30\Bogdo\ModuleOptions::templateNewTab($item)?>
+						<?= ModuleOptions::templateNewTab($item)?>
 					<?endforeach?>
 				</tbody>
 			</table>
@@ -72,7 +74,7 @@ $tabControl->Begin();
 
 </form>
 <?
-\K30\Bogdo\ModuleOptions::ShowCSS();
-\K30\Bogdo\ModuleOptions::ShowJS();
-?>
-<? require($_SERVER["DOCUMENT_ROOT"] . BX_ROOT . "/modules/main/include/epilog_admin.php"); ?>
+ModuleOptions::ShowCSS();
+ModuleOptions::ShowJS();
+
+require($_SERVER["DOCUMENT_ROOT"] . BX_ROOT . "/modules/main/include/epilog_admin.php"); ?>

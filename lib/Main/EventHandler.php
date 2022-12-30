@@ -1,5 +1,5 @@
 <?
-namespace K30\Bogdo;
+namespace MG\HP\Main;
 
 class EventHandler {
 
@@ -8,7 +8,7 @@ class EventHandler {
 	}
 
 	public static function OnEpilog(){
-		\Bogdo\Debug::showLog();
+		\MG\HP\Debug::showLog();
 	}
 }
 

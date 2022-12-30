@@ -1,6 +1,6 @@
 <?
 
-namespace K30\Bogdo;
+namespace MG\HP\Main;
 
 use Bitrix\Main\Application;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
@@ -191,7 +191,7 @@ class ModuleOptions
 	{
 		$result = array();
 
-		$Tabs = \K30\Bogdo\TabsTable::getEntity();
+		$Tabs = TabsTable::getEntity();
 		$obTable = (new  \Bitrix\Main\ORM\Query\Query($Tabs))
 			->setSelect(['*'])
 			->setOrder(['SORT' => 'ASC', 'ID' => 'ASC'])
@@ -206,7 +206,7 @@ class ModuleOptions
 	{
 		$result = array();
 
-		$Tabs = \K30\Bogdo\TabsTable::getEntity();
+		$Tabs = TabsTable::getEntity();
 		$obTable = (new  \Bitrix\Main\ORM\Query\Query($Tabs))
 			->setFilter(["ID" => $ID])
 			->setSelect(['*'])
@@ -219,7 +219,7 @@ class ModuleOptions
 
 	public static function AddTab(array $params = array("NAME" => "default name", "SORT" => 100))
 	{
-		$result = \K30\Bogdo\TabsTable::add(array(
+		$result = TabsTable::add(array(
 			"NAME" => $params["NAME"],
 			"SORT" => $params["SORT"]
 		));
@@ -236,7 +236,7 @@ class ModuleOptions
 
 	public static function updateTab($ID, array $params = array("NAME" => "default name", "SORT" => 100))
 	{
-		$result = \K30\Bogdo\TabsTable::update($ID, array(
+		$result = TabsTable::update($ID, array(
 			"NAME" => $params["NAME"],
 			"SORT" => $params["SORT"]
 		));
@@ -246,18 +246,18 @@ class ModuleOptions
 
 	public static function deleteTab($ID)
 	{
-		$result = \K30\Bogdo\TabsTable::delete($ID);
+		$result = TabsTable::delete($ID);
 
 		if($result->isSuccess())
 		{
-			$TabsUserFieldUsTable = \K30\Bogdo\TabsUserFieldUsTable::getEntity();
+			$TabsUserFieldUsTable = TabsUserFieldUsTable::getEntity();
 			$obTable = (new  \Bitrix\Main\ORM\Query\Query($TabsUserFieldUsTable))
 				->setFilter(["ID_TABS" => $ID])
 				->setSelect(['ID'])
 				->exec();
 			while($elem = $obTable->fetch())
 			{
-				\K30\Bogdo\TabsUserFieldUsTable::delete($elem["ID"]);
+				TabsUserFieldUsTable::delete($elem["ID"]);
 			}			
 		}
 	}
@@ -270,7 +270,7 @@ class ModuleOptions
 		$UserFieldTabsEntity->addField(
 			(new Reference(
 				"TABS",
-				\K30\Bogdo\TabsUserFieldUsTable::getEntity(),
+				TabsUserFieldUsTable::getEntity(),
 				// Join::on(
 				// 	'this.ID','ref.SETTINGS_ID'
 				// )
@@ -308,7 +308,7 @@ class ModuleOptions
 	public static function UpdateUserFieldListforTab($ID_TAB, array $ID_OPTION)
 	{
 		// добавить 
-		$TabsUserFieldUsTable = \K30\Bogdo\TabsUserFieldUsTable::getEntity();
+		$TabsUserFieldUsTable = TabsUserFieldUsTable::getEntity();
 		$obTable = (new  \Bitrix\Main\ORM\Query\Query($TabsUserFieldUsTable))
 			->setFilter(["ID_TABS" => $ID_TAB])
 			->setSelect(['*'])
@@ -340,7 +340,7 @@ class ModuleOptions
 		}
 		if($addMulty)
 		{
-			\K30\Bogdo\TabsUserFieldUsTable::addMulti($addMulty);
+			TabsUserFieldUsTable::addMulti($addMulty);
 		}
 		
 		// удалить
@@ -349,14 +349,14 @@ class ModuleOptions
 			if(in_array($option["SETTINGS_ID"],array_keys($ID_OPTION)) and $ID_OPTION[$option["SETTINGS_ID"]] != "Y")
 			{
 				// echo"<pre>"; var_dump($option["ID"]); echo "</pre>";
-				\K30\Bogdo\TabsUserFieldUsTable::delete($option["ID"]);
+				TabsUserFieldUsTable::delete($option["ID"]);
 			}
 		}
 	}
 
 	public static function GetTabAndUserFieldCode($ID_TAB)
 	{
-		$TabAndUserFieldCode = \K30\Bogdo\TabsUserFieldUsTable::getEntity();
+		$TabAndUserFieldCode = TabsUserFieldUsTable::getEntity();
 		$obTable = (new  \Bitrix\Main\ORM\Query\Query($TabAndUserFieldCode))
 			->setFilter(["ID_TABS" => $ID_TAB])
 			->setSelect(['*', 'FIELD_NAME'=>'SETTINGS.FIELD_NAME', 'SORT'=>'SETTINGS.SORT'])

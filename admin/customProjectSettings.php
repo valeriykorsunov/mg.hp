@@ -28,9 +28,9 @@ if (
 )
 {
 	$arUpdateFields = array();
-	$USER_FIELD_MANAGER->EditFormAddFields("K30_BOGDO", $arUpdateFields); // fill $arUpdateFields from $_POST and $_FILES
+	$USER_FIELD_MANAGER->EditFormAddFields("MG_HP", $arUpdateFields); // fill $arUpdateFields from $_POST and $_FILES
 
-	$obSettings = new CK30BogdoSetings;
+	$obSettings = new MgHpSetings;
 	$res = $obSettings->Update($arUpdateFields);
 	if ($res)
 	{
@@ -43,7 +43,7 @@ if (
 }
 
 
-$userTabList = \K30\Bogdo\ModuleOptions::GetTabsList();
+$userTabList = \MG\HP\Main\ModuleOptions::GetTabsList();
 foreach ($userTabList as $tab)
 {
 	$arTabs[] = array("DIV" => $tab["ID"], "TAB" => $tab["NAME"], "ICON" => "", "TITLE" => $tab["NAME"]);
@@ -52,7 +52,7 @@ foreach ($userTabList as $tab)
 $arTabs[] = array("DIV" => "editEnd", "TAB" => "Прочие настройки", "ICON" => "", "TITLE" => "Прочие настройки");
 
 $bVarsFromForm = false;
-$arUserFields = $USER_FIELD_MANAGER->GetUserFields("K30_BOGDO", 1, LANGUAGE_ID);
+$arUserFields = $USER_FIELD_MANAGER->GetUserFields("MG_HP", 1, LANGUAGE_ID);
 /******************************************************************************************************************************** */
 $APPLICATION->SetTitle("Настройки сайта");
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
@@ -93,8 +93,7 @@ $tabControl->Begin();
 	<? foreach ($tabControl->tabs as $tab) : ?>
 		<?
 		$tabControl->BeginNextTab();
-		$tbFields = \K30\Bogdo\ModuleOptions::GetTabAndUserFieldCode($tab["DIV"]);
-
+		$tbFields = \MG\HP\Main\ModuleOptions::GetTabAndUserFieldCode($tab["DIV"]);
 		?>
 		<? foreach ($tbFields as $fieldC) : ?>
 			<?

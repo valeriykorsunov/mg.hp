@@ -7,7 +7,7 @@ use Bitrix\Main\Entity\Base;
 use Bitrix\Main\Localization\Loc;
 
 Loc::loadMessages(__FILE__);
-class k30_bogdo extends CModule
+class mg_hp extends CModule
 {
 
 	function __construct()
@@ -15,14 +15,14 @@ class k30_bogdo extends CModule
 		$arModuleVersion = array();
 		include(__DIR__ . '/version.php');
 
-		$this->MODULE_ID = 'k30.bogdo';
+		$this->MODULE_ID = 'mg.hp';
 		$this->MODULE_VERSION = $arModuleVersion["VERSION"];
 		$this->MODULE_VERSION_DATE = $arModuleVersion["VERSION_DATE"];
-		$this->MODULE_NAME = Loc::getMessage("K30_BOGDO_MODULE_NAME"); // имя модуля
-		$this->MODULE_DESCRIPTION = Loc::getMessage("K30_BOGDO_MODULE_DESCRIPTION"); // описание модуля
+		$this->MODULE_NAME = "HELPER";
+		$this->MODULE_DESCRIPTION = "HELPER"; 
 
-		$this->PARTNER_NAME = Loc::getMessage("K30_BOGDO_PARTNER_NAME");
-		$this->PARTNER_URI = Loc::getMessage("K30_BOGDO_PARTNER_URI");
+		$this->PARTNER_NAME = "MG";
+		$this->PARTNER_URI = "http://bxwork.ru";
 
 		$this->MODULE_SORT = 1;
 		$this->SHOW_SUPER_ADMIN_GROUP_RIGHTS = 'Y';
@@ -38,7 +38,7 @@ class k30_bogdo extends CModule
 		{
 			ModuleManager::registerModule($this->MODULE_ID);
 
-			RegisterModuleDependences("main", "OnUserTypeBuildList", "k30.bogdo", "СComplexUserProperty", "getDescription");
+			// RegisterModuleDependences("main", "OnUserTypeBuildList", "mg.hp", "СComplexUserProperty", "getDescription");
 
 			Loader::includeModule($this->MODULE_ID);
 			$this->InstallDB();
@@ -47,10 +47,10 @@ class k30_bogdo extends CModule
 		}
 		else
 		{
-			$APPLICATION->ThrowException(Loc::getMessage("K30_BOGDO_ERROR_VERSION"));
+			$APPLICATION->ThrowException('Версия ядра Битрикс не поддерживается или версия php ниже необходимой.');
 		}
 
-		$APPLICATION->IncludeAdminFile(Loc::getMessage("K30_BOGDO_INSTALL_TITLE"), $this->GetPath() . "/install/step.php");
+		$APPLICATION->IncludeAdminFile("INSTALL TITLE", $this->GetPath() . "/install/step.php");
 	}
 
 	function DoUninstall()
@@ -59,10 +59,9 @@ class k30_bogdo extends CModule
 		global $APPLICATION;
 		$context = Application::getInstance()->getContext();
 		$request = $context->getRequest();
-
 		if ($request["step"] < 2)
 		{
-			$APPLICATION->IncludeAdminFile(Loc::getMessage("K30_BOGDO_UNINSTALL_TITLE"), $this->GetPath() . "/install/unstep1.php");
+			$APPLICATION->IncludeAdminFile("UNINSTALL TITLE", $this->GetPath() . "/install/unstep1.php");
 		}
 		elseif ($request["step"] == 2)
 		{
@@ -70,14 +69,14 @@ class k30_bogdo extends CModule
 			{
 				$this->UnInstallDB();
 			}
-
+	
 			$this->editHandler("uninstall");
 			$this->editFiles("uninstall");
 
-			UnRegisterModuleDependences("main", "OnUserTypeBuildList", "k30.bogdo", "СComplexUserProperty", "getDescription");
-
+			// UnRegisterModuleDependences("main", "OnUserTypeBuildList", "mg.hp", "СComplexUserProperty", "getDescription");
+	
 			ModuleManager::unRegisterModule($this->MODULE_ID);
-			$APPLICATION->IncludeAdminFile(Loc::getMessage("K30_BOGDO_UNINSTALL_TITLE"), $this->GetPath() . "/install/unstep2.php");
+			$APPLICATION->IncludeAdminFile("UNINSTALL TITLE", $this->GetPath() . "/install/unstep2.php");
 		}
 	}
 
@@ -85,14 +84,14 @@ class k30_bogdo extends CModule
     {
 		Loader::includeModule($this->MODULE_ID);
 
-        if(!Application::getConnection(\K30\Bogdo\TabsTable::getConnectionName())->isTableExists(Base::getInstance('\K30\Bogdo\TabsTable')->getDBTableName()))
+		if(!Application::getConnection(\MG\HP\Main\TabsTable::getConnectionName())->isTableExists(Base::getInstance('\MG\HP\Main\TabsTable')->getDBTableName()))
         {
-            Base::getInstance('\K30\Bogdo\TabsTable')->createDbTable();
+            Base::getInstance('\MG\HP\Main\TabsTable')->createDbTable();
         }
 		
-        if(!Application::getConnection(\K30\Bogdo\TabsUserFieldUsTable::getConnectionName())->isTableExists(Base::getInstance('\K30\Bogdo\TabsUserFieldUsTable')->getDBTableName()))
+        if(!Application::getConnection(\MG\HP\Main\TabsUserFieldUsTable::getConnectionName())->isTableExists(Base::getInstance('\MG\HP\Main\TabsUserFieldUsTable')->getDBTableName()))
         {
-            Base::getInstance('\K30\Bogdo\TabsUserFieldUsTable')->createDbTable();
+            Base::getInstance('\MG\HP\Main\TabsUserFieldUsTable')->createDbTable();
         }
 	}
 	
@@ -100,14 +99,14 @@ class k30_bogdo extends CModule
 	{
         Loader::includeModule($this->MODULE_ID);
 
-        Application::getConnection(\K30\Bogdo\TabsTable::getConnectionName())->queryExecute('drop table if exists '.Base::getInstance('\K30\Bogdo\TabsTable')->getDBTableName());
+        Application::getConnection(\MG\HP\Main\TabsTable::getConnectionName())->queryExecute('drop table if exists '.Base::getInstance('\MG\HP\Main\TabsTable')->getDBTableName());
 
-        Application::getConnection(\K30\Bogdo\TabsUserFieldUsTable::getConnectionName())->queryExecute('drop table if exists '.Base::getInstance('\K30\Bogdo\TabsUserFieldUsTable')->getDBTableName());
+        Application::getConnection(\MG\HP\Main\TabsUserFieldUsTable::getConnectionName())->queryExecute('drop table if exists '.Base::getInstance('\MG\HP\Main\TabsUserFieldUsTable')->getDBTableName());
 	}
 
 	protected function isVersionD7()
 	{
-		return CheckVersion(\Bitrix\Main\ModuleManager::getVersion("main"), "14.00.00"); // на этой версии я начал разработку.
+		return CheckVersion(\Bitrix\Main\ModuleManager::getVersion("main"), "20.00.00"); 
 	}
 
 	protected function isVersionPhp($version = '7.4')
@@ -149,6 +148,7 @@ class k30_bogdo extends CModule
 		}
 		return	true;
 	}
+	
 	protected function registerHandler(array $params)
 	{
 		if (!isset($params["ModuleId"], $params["Event"], $params["Sort"])) return false; // TODO зафиксировать как ошибку.
@@ -157,7 +157,7 @@ class k30_bogdo extends CModule
 			$params["ModuleId"],
 			$params["Event"],
 			$this->MODULE_ID,
-			'K30\Bogdo\EventHandler',
+			'MG\HP\EventHandler',
 			$params["Event"],
 			$params["Sort"]
 		);
@@ -171,7 +171,7 @@ class k30_bogdo extends CModule
 			$params["ModuleId"],
 			$params["Event"],
 			$this->MODULE_ID,
-			'K30\Bogdo\EventHandler',
+			'MG\HP\Main\EventHandler',
 			$params["Event"]
 		);
 		return true;
@@ -205,11 +205,13 @@ class k30_bogdo extends CModule
 		}
 		return true;
 	}
+
 	protected function filesInstall(string $path_from, string $path_to, bool $recursive = false)
 	{
 		CopyDirFiles($path_from, $path_to, true, $recursive);
 		return true;
 	}
+	
 	protected function filesUninstall(string $path_from = "", string $path_to, bool $recursive = false)
 	{
 		if ($recursive)

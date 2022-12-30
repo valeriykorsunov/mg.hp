@@ -1,6 +1,6 @@
 <?php
 
-namespace K30\Bogdo;
+namespace MG\HP;
 
 class Pict
 {

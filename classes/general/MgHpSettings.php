@@ -1,6 +1,6 @@
 <?
 
-class CK30BogdoSetings
+class MgHpSettings
 {
 	static private $arFields = false;
 	public $LAST_ERROR = "";
@@ -21,7 +21,7 @@ class CK30BogdoSetings
 			//if( $obCache->InitCache( $cache_ttl, $cache_id, $cache_dir ) )
 
 			$obCache = new CPHPCache;
-			if ($obCache->InitCache(14400, 1, "k30.bogdo"))
+			if ($obCache->InitCache(14400, 1, "mg.hp"))
 			{
 				$arResult = $obCache->GetVars();
 			}
@@ -30,7 +30,7 @@ class CK30BogdoSetings
 				//				if ( defined('BX_COMP_MANAGED_CACHE') && is_object($GLOBALS['CACHE_MANAGER']) )
 				//				{				
 				//					global $CACHE_MANAGER;
-				//					$CACHE_MANAGER->StartTagCache( "k30.bogdo" );
+				//					$CACHE_MANAGER->StartTagCache( "mg.hp" );
 				//				}
 
 				$arResult = self::__GetFields();
@@ -38,7 +38,7 @@ class CK30BogdoSetings
 
 				//				if ( defined('BX_COMP_MANAGED_CACHE') && is_object($GLOBALS['CACHE_MANAGER']) )
 				//				{
-				//					$CACHE_MANAGER->EndTagCache( "k30.bogdo" );
+				//					$CACHE_MANAGER->EndTagCache( "mg.hp" );
 				//				}
 
 				$obCache->EndDataCache($arResult);
@@ -57,7 +57,7 @@ class CK30BogdoSetings
 		$arResult = array();
 
 		$ID = 1;
-		$entity_id = "K30_BOGDO";
+		$entity_id = "MG_HP";
 
 		$arUserFields = $USER_FIELD_MANAGER->GetUserFields($entity_id, $ID, LANGUAGE_ID);
 
@@ -72,9 +72,9 @@ class CK30BogdoSetings
 	public static function ClearCache()
 	{
 		$obCache = new CPHPCache();
-		$obCache->CleanDir("k30.bogdo");
+		$obCache->CleanDir("mg.hp");
 
-		//BXClearCache(true, "/k30.bogdo/");
+		//BXClearCache(true, "/mg.hp/");
 	}
 
 	public function Update($arFields)
@@ -85,10 +85,10 @@ class CK30BogdoSetings
 		$this->LAST_ERROR = "";
 
 		$ID = 1;
-		$entity_id = "K30_BOGDO";
+		$entity_id = "MG_HP";
 
 		$APPLICATION->ResetException();
-		$events = GetModuleEvents("k30.bogdo", "OnBeforeSettingsUpdate");
+		$events = GetModuleEvents("mg.hp", "OnBeforeSettingsUpdate");
 		while ($arEvent = $events->Fetch())
 		{
 			$bEventRes = ExecuteModuleEventEx($arEvent, array(&$arFields));
@@ -118,7 +118,7 @@ class CK30BogdoSetings
 			$USER_FIELD_MANAGER->Update($entity_id, $ID, $arFields);
 			self::ClearCache();
 
-			$events = GetModuleEvents("k30.bogdo", "OnAfterSettingsUpdate");
+			$events = GetModuleEvents("mg.hp", "OnAfterSettingsUpdate");
 			while ($arEvent = $events->Fetch())
 			{
 				ExecuteModuleEventEx($arEvent, array(&$arFields));

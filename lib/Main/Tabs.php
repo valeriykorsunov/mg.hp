@@ -1,5 +1,5 @@
 <?
-namespace K30\Bogdo;
+namespace MG\HP\Main;
 
 use Bitrix\Main\ORM;
 use Bitrix\Main\ORM\Query\Join;
@@ -8,7 +8,7 @@ class TabsTable extends ORM\Data\DataManager
 {
 	public static function getTableName()
     {
-        return 'k30_bogdo_tabs';
+        return 'mg_hp_tabs';
     }
 
 	public static function getMap()

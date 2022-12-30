@@ -1,6 +1,6 @@
 <?
 
-namespace K30\Bogdo;
+namespace MG\HP\Main;
 
 use Bitrix\Main\ORM;
 use Bitrix\Main\ORM\Query\Join;
@@ -9,7 +9,7 @@ class TabsUserFieldUsTable extends ORM\Data\DataManager
 {
     public static function getTableName()
     {
-        return 'k30_bogdo_tabs_user_field_us';
+        return 'mg_hp_tabs_user_field_us';
     }
 
     public static function getMap()
@@ -24,7 +24,7 @@ class TabsUserFieldUsTable extends ORM\Data\DataManager
 			(new ORM\Fields\Relations\Reference('SETTINGS', \Bitrix\Main\UserFieldTable::class, Join::on('this.SETTINGS_ID', 'ref.ID'))),
 
 			(new ORM\Fields\IntegerField('ID_TABS')),
-			(new ORM\Fields\Relations\Reference('TABS', \K30\Bogdo\TabsTable::class, Join::on('this.ID_TABS', 'ref.ID'))),
+			(new ORM\Fields\Relations\Reference('TABS', TabsTable::class, Join::on('this.ID_TABS', 'ref.ID'))),
         );
     }
 }

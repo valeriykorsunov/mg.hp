@@ -1,4 +1,4 @@
 <?
-define("ADMIN_MODULE_NAME", "k30.bogdo");
+define("ADMIN_MODULE_NAME", "mg.hp");
 IncludeModuleLangFile(__FILE__);
 ?>

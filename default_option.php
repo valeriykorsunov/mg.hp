@@ -1,8 +1,8 @@
 <?
-$k30_bogdo_default_option = array();
+$mg_hp_default_option = array();
 
-if( CModule::IncludeModule("k30.bogdo") )
+if( CModule::IncludeModule("mg.hp") )
 {
-	$k30_bogdo_default_option = CK30BogdoSetings::GetFields();
+	$mg_hp_default_option = MgHpSettings::GetFields();
 }
 ?>

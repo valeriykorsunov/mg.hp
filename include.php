@@ -1,9 +1,9 @@
 <?
 
 \Bitrix\Main\Loader::registerAutoLoadClasses(
-	"k30.bogdo",
+	"mg.hp",
 	array(
-		'Bogdo\Debug' => 'classes/general/Debug.php',
-		'CK30BogdoSetings' => 'classes/general/CK30BogdoSetings.php'
+		// 'Bogdo\Debug' => 'classes/general/Debug.php',
+		'MgHpSettings' => 'classes/general/MgHpSettings.php'
 	)
 );

@@ -1,10 +1,6 @@
 <?
 
-namespace K30\Bogdo;
-
-/**
- * KVV 2022
- */
+namespace MG\HP\Main;
 
 /**
  * Комплексное пользовательское свойство

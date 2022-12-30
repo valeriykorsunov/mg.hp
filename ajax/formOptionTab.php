@@ -1,6 +1,8 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_before.php");
 
+use \MG\HP\ModuleOptions;
+
 $request = Bitrix\Main\Context::getCurrent()->getRequest();
 
 $paramsTab = array();
@@ -10,7 +12,7 @@ if($request["save"] != "" )
 {
 	if($paramsTab["ID_TAB"] == "new")
 	{
-		if($newtab = \K30\Bogdo\ModuleOptions::AddTab([
+		if($newtab = ModuleOptions::AddTab([
 			"NAME" => $request["tabname"],
 			"SORT" => $request["sortTab"]
 		]))
@@ -20,7 +22,7 @@ if($request["save"] != "" )
 	}
 	else
 	{
-		\K30\Bogdo\ModuleOptions::updateTab($paramsTab["ID_TAB"], [
+		ModuleOptions::updateTab($paramsTab["ID_TAB"], [
 			"NAME" => $request["tabname"],
 			"SORT" => $request["sortTab"]
 		]);
@@ -29,7 +31,7 @@ if($request["save"] != "" )
 
 	if(is_array($request["select"]))
 	{
-		\K30\Bogdo\ModuleOptions::UpdateUserFieldListforTab($paramsTab["ID_TAB"], $request["select"]);
+		ModuleOptions::UpdateUserFieldListforTab($paramsTab["ID_TAB"], $request["select"]);
 	}
 }
 if($paramsTab["ID_TAB"] == "new")
@@ -41,14 +43,14 @@ if($paramsTab["ID_TAB"] == "new")
 else
 {
 // Получить новые данные для формы
-	$tabInfo = \K30\Bogdo\ModuleOptions::GetTabsInfo($paramsTab["ID_TAB"]);
+	$tabInfo = ModuleOptions::GetTabsInfo($paramsTab["ID_TAB"]);
 
 	$paramsTab["ID_TAB"] = $tabInfo["ID"];
 	$paramsTab["TAB_NAME"] = $tabInfo["NAME"];
 	$paramsTab["TAB_SORT"] = $tabInfo["SORT"];
 }
 
-$userfieldList = \K30\Bogdo\ModuleOptions::GetUserFieldList($paramsTab["ID_TAB"]);
+$userfieldList = ModuleOptions::GetUserFieldList($paramsTab["ID_TAB"]);
 ?>
 
 <form method="POST" id="optionsTab">
@@ -91,5 +93,5 @@ $userfieldList = \K30\Bogdo\ModuleOptions::GetUserFieldList($paramsTab["ID_TAB"]
 		</tbody>
 	</table>
 
-	<? \K30\Bogdo\ModuleOptions::ShowJSformOptionTab() ?>
+	<? ModuleOptions::ShowJSformOptionTab() ?>
 </form>
