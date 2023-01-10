@@ -28,7 +28,7 @@ $tabControl = new CAdminTabControl("tabControl", $aTabs);
 $tabControl->Begin();
 ?>
 
-<form method="post" action="<? echo $APPLICATION->GetCurPage() ?>?&lang=<?= LANGUAGE_ID ?>&mid=k30.bogdo" enctype="multipart/form-data">
+<form method="post" action="<? echo $APPLICATION->GetCurPage() ?>?&lang=<?= LANGUAGE_ID ?>&mid=mg.hp" enctype="multipart/form-data">
 	<?= bitrix_sessid_post() ?>
 	<? 
 	$tabControl->BeginNextTab();

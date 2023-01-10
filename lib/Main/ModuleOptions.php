@@ -22,18 +22,18 @@ class ModuleOptions
 		global $APPLICATION;
 
 		echo '
-		<a href="/bitrix/admin/userfield_edit.php?lang=<?= LANGUAGE_ID ?>&amp;ENTITY_ID=K30_BOGDO&amp;back_url=' . urlencode($APPLICATION->GetCurPageParam() . '&tabControl_active_tab=user_fields_tab') . '">Добавить настройку</a>';
+		<a href="/bitrix/admin/userfield_edit.php?lang=<?= LANGUAGE_ID ?>&amp;ENTITY_ID=MG_HP&amp;back_url=' . urlencode($APPLICATION->GetCurPageParam() . '&tabControl_active_tab=user_fields_tab') . '">Добавить настройку</a>';
 	}
 
 	public static function ShowInstructionProperty()
 	{
-?>
+	?>
 		<?= BeginNote(); ?>
-		<br><strong>&lt;?echo \COption::GetOptionString( &quot;k30.bogdo&quot;, &quot;UF_PHONE&quot;);?&gt;</strong>
-		<br><strong>&lt;?$email = \COption::GetOptionString( &quot;k30.bogdo&quot;, &quot;UF_EMAIL&quot;);?&gt;</strong>
+		<br><strong>&lt;?echo \COption::GetOptionString( &quot;mg.hp&quot;, &quot;UF_PHONE&quot;);?&gt;</strong>
+		<br><strong>&lt;?$email = \COption::GetOptionString( &quot;mg.hp&quot;, &quot;UF_EMAIL&quot;);?&gt;</strong>
 		<br>D7:
-		<br><strong>&lt;?echo \Bitrix\Main\Config\Option::get( &quot;k30.bogdo&quot;, &quot;UF_PHONE&quot;);?&gt;</strong>
-		<br><strong>&lt;?$email = \Bitrix\Main\Config\Option::get( &quot;k30.bogdo&quot;, &quot;UF_EMAIL&quot;);?&gt;</strong>
+		<br><strong>&lt;?echo \Bitrix\Main\Config\Option::get( &quot;mg.hp&quot;, &quot;UF_PHONE&quot;);?&gt;</strong>
+		<br><strong>&lt;?$email = \Bitrix\Main\Config\Option::get( &quot;mg.hp&quot;, &quot;UF_EMAIL&quot;);?&gt;</strong>
 		<?= EndNote(); ?>
 	<?
 	}
@@ -296,7 +296,7 @@ class ModuleOptions
 		$obTable = (new  \Bitrix\Main\ORM\Query\Query($UserFieldTabsEntity))
 			->setSelect(['ID','FIELD_NAME', 'SETTINGS_ID'=>'TABS.SETTINGS_ID', 'USER_FIELD_NAME'=>'USER_FIELD_LANG.EDIT_FORM_LABEL'])
 			->setFilter([
-				"ENTITY_ID" => "K30_BOGDO"
+				"ENTITY_ID" => "MG_HP"
 			])
 			->setOrder(['SORT' => 'ASC', 'ID' => 'ASC'])
 			->exec();
