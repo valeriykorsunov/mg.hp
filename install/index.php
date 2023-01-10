@@ -157,7 +157,7 @@ class mg_hp extends CModule
 			$params["ModuleId"],
 			$params["Event"],
 			$this->MODULE_ID,
-			'MG\HP\EventHandler',
+			'MG\HP\Main\EventHandler',
 			$params["Event"],
 			$params["Sort"]
 		);
