@@ -1,7 +1,7 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_before.php");
 
-use \MG\HP\ModuleOptions;
+use \MG\HP\Main\ModuleOptions;
 
 $request = Bitrix\Main\Context::getCurrent()->getRequest();
 

@@ -59,7 +59,7 @@ $tabControl->Begin();
 			</table>
 
 			<div style="padding-top: 10px;">
-				<a href="javascript:void(0)" data-tabname="Новая вкладка" data-tabid="new" onclick="editTab(this);">Допавить вкладку</a>
+				<a href="javascript:void(0)" data-tabname="Новая вкладка" data-tabid="new" onclick="editTab(this);">Добавить вкладку</a>
 			</div>
 		</td>
 	</tr>

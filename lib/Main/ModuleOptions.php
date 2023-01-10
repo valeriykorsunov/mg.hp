@@ -10,8 +10,9 @@ class ModuleOptions
 {
 	static function GetPath($notDocumentRoot = false)
 	{
-		if ($notDocumentRoot)
-			return str_ireplace(Application::getDocumentRoot(), '', dirname(__DIR__));
+		if ($notDocumentRoot){
+			return str_ireplace(Application::getDocumentRoot(), '', dirname(__DIR__,2));
+		}
 		else
 			return dirname(__DIR__);
 	}
