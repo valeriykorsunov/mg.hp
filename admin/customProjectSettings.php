@@ -30,7 +30,7 @@ if (
 	$arUpdateFields = array();
 	$USER_FIELD_MANAGER->EditFormAddFields("MG_HP", $arUpdateFields); // fill $arUpdateFields from $_POST and $_FILES
 
-	$obSettings = new MgHpSetings;
+	$obSettings = new MgHpSettings;
 	$res = $obSettings->Update($arUpdateFields);
 	if ($res)
 	{
