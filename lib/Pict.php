@@ -16,15 +16,19 @@ class Pict
 
 	private static function checkFormat($str)
 	{
-		if ($str === 'image/png') {
+		if ($str === 'image/png')
+		{
 			self::$isPng = true;
 
 			return true;
-		} elseif ($str === 'image/jpeg') {
+		}
+		elseif ($str === 'image/jpeg')
+		{
 			self::$isPng = false;
 
 			return true;
-		} else
+		}
+		else
 			return false;
 	}
 
@@ -41,11 +45,14 @@ class Pict
 
 		$arPath = explode('/', $str);
 
-		if ($arPath[2] === 'resize_cache') {
+		if ($arPath[2] === 'resize_cache')
+		{
 			$arPath = self::implodeSrc($arPath);
 
 			return str_replace('resize_cache/iblock', 'webp/resize_cache', $arPath);
-		} else {
+		}
+		else
+		{
 			$arPath = self::implodeSrc($arPath);
 
 			return str_replace('upload/iblock', 'upload/webp/iblock', $arPath);
@@ -63,26 +70,35 @@ class Pict
 	private static function getWebp($array, $intQuality = 90)
 	{
 
-		if (self::checkFormat($array['CONTENT_TYPE'])) {
+		if (self::checkFormat($array['CONTENT_TYPE']))
+		{
 			$array['WEBP_PATH'] = self::generateSrc($array['SRC']);
 
-			if (self::$isPng) {
+			if (self::$isPng)
+			{
 				$array['WEBP_FILE_NAME'] = str_replace('.png', '.webp', strtolower($array['FILE_NAME']));
-			} else {
+			}
+			else
+			{
 				$array['WEBP_FILE_NAME'] = str_replace('.jpg', '.webp', strtolower($array['FILE_NAME']));
 				$array['WEBP_FILE_NAME'] = str_replace('.jpeg', '.webp', strtolower($array['WEBP_FILE_NAME']));
 			}
 
-			if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_PATH'])) {
+			if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_PATH']))
+			{
 				mkdir($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_PATH'], 0777, true);
 			}
 
 			$array['WEBP_SRC'] = $array['WEBP_PATH'] . $array['WEBP_FILE_NAME'];
 
-			if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_SRC'])) {
-				if (self::$isPng) {
+			if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_SRC']))
+			{
+				if (self::$isPng)
+				{
 					$im = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'] . $array['SRC']);
-				} else {
+				}
+				else
+				{
 					$im = imagecreatefromjpeg($_SERVER['DOCUMENT_ROOT'] . $array['SRC']);
 				}
 
@@ -90,7 +106,8 @@ class Pict
 
 				imagedestroy($im);
 
-				if (filesize($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_SRC']) % 2 == 1) {
+				if (filesize($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_SRC']) % 2 == 1)
+				{
 					file_put_contents($_SERVER['DOCUMENT_ROOT'] . $array['WEBP_SRC'], "\0", FILE_APPEND);
 				}
 			}
@@ -102,10 +119,14 @@ class Pict
 	private static function init()
 	{
 
-		if (!self::$_inited) {
-			if (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false || strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false) {
+		if (!self::$_inited)
+		{
+			if (strpos($_SERVER['HTTP_ACCEPT'], 'image/webp') !== false || strpos($_SERVER['HTTP_USER_AGENT'], ' Chrome/') !== false)
+			{
 				self::$clientSupportWebp = true;
-			} else {
+			}
+			else
+			{
 				self::$clientSupportWebp = false;
 			}
 			self::$_inited = true;
@@ -129,7 +150,8 @@ class Pict
 		self::init();
 
 		$file['SRC'] = self::resizePict($file, $width, $height, $isProportional, $intQuality);
-		if ($ignoreSupport || self::$clientSupportWebp) {
+		if ($ignoreSupport || self::$clientSupportWebp)
+		{
 			$file = self::getWebp($file, $intQuality);
 		}
 
@@ -149,7 +171,8 @@ class Pict
 	public static function setPictureSizes($sizes = array())
 	{
 
-		if (count($sizes)) {
+		if (count($sizes))
+		{
 			self::$sizes = $sizes;
 
 			return true;
@@ -168,20 +191,25 @@ class Pict
 	 */
 	public static function getRetinaElementPictureIn($file, $convertToWebp = true, $ignoreSupport = false, $alt = "")
 	{
+		$alt = (empty($alt) && $file["DESCRIPTION"])?$file["DESCRIPTION"]:$alt; 
 		$ret = '';
-		foreach (self::$sizes as $media => $size) {
-			if ($media != 'other') {
+		foreach (self::$sizes as $media => $size)
+		{
+			if ($media != 'other')
+			{
 				$x1 = $convertToWebp ? self::getResizeWebpSrc($file, $size['1x'], $size['1x'] * 100, true, 90, $ignoreSupport)
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
 				$x2 = $convertToWebp ? self::getResizeWebpSrc($file, $size['2x'], $size['2x'] * 100, true, 90, $ignoreSupport)
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
-				$ret .= '<source media="(' . $media . ')" srcset="' . $x1 . ', ' . $x2 . ' 2x">';
-			} else {
+				$ret .= '<source media="(' . $media . ')" srcset="' . $x1 . ', ' . $x2 . ' 2x" >';
+			}
+			else
+			{
 				$x1 = $convertToWebp ? self::getResizeWebpSrc($file, $size['1x'], $size['1x'] * 100, true, 90, $ignoreSupport)
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
 				$x2 = $convertToWebp ? self::getResizeWebpSrc($file, $size['2x'], $size['2x'] * 100, true, 90, $ignoreSupport)
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
-				$ret .= '<img src="' . $x1 . '" srcset="' . $x2 . ' 2x" alt="'.$alt.'">';
+				$ret .= '<img src="' . $x1 . '" srcset="' . $x2 . ' 2x" alt="' . $alt . '">';
 			}
 		}
 
