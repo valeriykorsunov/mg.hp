@@ -13,7 +13,7 @@ class CCustomTypeHtml extends StringType
 		return array(
 			"USER_TYPE_ID" => "customhtmltext",
 			"CLASS_NAME" => __CLASS__,
-			"DESCRIPTION" => "Пользовательское свойство Текст/Html",
+			"DESCRIPTION" => "Пользовательское свойство Текст/Html (HELPER)",
 			"BASE_TYPE" => \CUserTypeManager::BASE_TYPE_STRING,
 		);
 	}

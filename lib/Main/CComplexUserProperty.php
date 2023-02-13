@@ -2,34 +2,23 @@
 
 namespace MG\HP\Main;
 
+use Bitrix\Main\UserField\Types\BaseType;
 /**
  * Комплексное пользовательское свойство
  */
-class СComplexUserProperty
+class CComplexUserProperty extends BaseType
 {
 	private static $showedCss = false;
 	private static $showedJs = false;
 
-	public static function getDescription(): array
+	public static function getUserTypeDescription(): array
 	{
-		return [
-			"USER_TYPE_ID" => "complex_property",
+		return array(
+			"USER_TYPE_ID" => "complex.property",
 			"CLASS_NAME" => __CLASS__,
-			'DESCRIPTION' => "Комплексное свойство (custom)",
+			'DESCRIPTION' => "Комплексное свойство (HELPER)",
 			'BASE_TYPE' => \CUserTypeManager::BASE_TYPE_STRING,
-		];
-	}
-
-	// временное решения связанное с багом в битриксе.. 
-	// регистрировать нужно оба метода
-	public static function getDescription_double(): array
-	{
-		return [
-			"USER_TYPE_ID" => "complex_property_double",
-			"CLASS_NAME" => __CLASS__,
-			'DESCRIPTION' => "Комплексное свойство (custom_double)",
-			'BASE_TYPE' => \CUserTypeManager::BASE_TYPE_STRING,
-		];
+		);
 	}
 	
 	public static function decodeValue($value)
@@ -58,15 +47,22 @@ class СComplexUserProperty
 	// {
 	// }
 
-	function GetEditFormHTML($arProperty, $strHTMLControlName)
+
+	/**
+	 * @param array $userField
+	 * @param array|null $additionalParameters
+	 * @return string
+	 */
+	// public function GetEditFormHTML($arProperty, $strHTMLControlName)
+	public static function getEditFormHtml(array $userField, ?array $additionalParameters): string
 	{
 		$hideText = "Свернуть";
 		$clearText = "Удалить";
 		self::showCss();
 		self::showJs();
-		if (!empty($arProperty['SETTINGS']))
+		if (!empty($userField['SETTINGS']))
 		{
-			$arFields = self::prepareSetting($arProperty['SETTINGS']);
+			$arFields = self::prepareSetting($userField['SETTINGS']);
 		}
 		else
 		{
@@ -74,16 +70,16 @@ class СComplexUserProperty
 		}
 		$result = "";
 		$result .= '<div class="mf-gray"><a class="cl mf-toggle">' . $hideText . '</a>';
-		if ($arProperty['MULTIPLE'] === 'Y')
+		if ($userField['MULTIPLE'] === 'Y')
 		{
 			$result .= ' | <a class="cl mf-delete">' . $clearText . '</a></div>';
 		}
 		$result .= '<table class="mf-fields-list active">';
 		$value = array();
 		// decode data
-		if (!empty($strHTMLControlName['VALUE']))
+		if (!empty($additionalParameters['VALUE']))
 		{
-			$arData = self::decodeValue($strHTMLControlName['VALUE']);
+			$arData = self::decodeValue($additionalParameters['VALUE']);
 			foreach ($arData as $code => $val)
 			{
 				$value['VALUE'][$code] = $val;
@@ -93,23 +89,23 @@ class СComplexUserProperty
 		{
 			if ($arItem['TYPE'] === 'string')
 			{
-				$result .= self::showString($code, $arItem['TITLE'], $value, $strHTMLControlName);
+				$result .= self::showString($code, $arItem['TITLE'], $value, $additionalParameters);
 			}
 			else if ($arItem['TYPE'] === 'file')
 			{
-				$result .= self::showFile($code, $arItem['TITLE'], $value, $strHTMLControlName);
+				$result .= self::showFile($code, $arItem['TITLE'], $value, $additionalParameters);
 			}
 			else if ($arItem['TYPE'] === 'text')
 			{
-				$result .= self::showTextarea($code, $arItem['TITLE'], $value, $strHTMLControlName);
+				$result .= self::showTextarea($code, $arItem['TITLE'], $value, $additionalParameters);
 			}
 			else if ($arItem['TYPE'] === 'date')
 			{
-				$result .= self::showDate($code, $arItem['TITLE'], $value, $strHTMLControlName);
+				$result .= self::showDate($code, $arItem['TITLE'], $value, $additionalParameters);
 			}
 			else if ($arItem['TYPE'] === 'element')
 			{
-				$result .= self::showBindElement($code, $arItem['TITLE'], $value, $strHTMLControlName);
+				$result .= self::showBindElement($code, $arItem['TITLE'], $value, $additionalParameters);
 			}
 		}
 		$result .= '</table>';
@@ -117,7 +113,7 @@ class СComplexUserProperty
 		return $result;
 	}
 
-	function OnBeforeSave($arProperty, $arValue)
+	public function OnBeforeSave($arProperty, $arValue)
 	{
 		$arFields = self::prepareSetting($arProperty['SETTINGS']);
 		foreach ($arValue as $code => $value)
@@ -148,7 +144,14 @@ class СComplexUserProperty
 		return $arResult;
 	}
 
-	function GetSettingsHTML($arProperty = false, $strHTMLControlName, $arHtmlControl)
+	/**
+	 * @param array|bool $userField
+	 * @param array|null $additionalParameters
+	 * @param $varsFromForm
+	 * @return string
+	 */
+	// public function GetSettingsHTML($arProperty = false, $strHTMLControlName, $arHtmlControl)
+	public static function getSettingsHtml($userField, ?array $additionalParameters, $varsFromForm): string
 	{
 		$btnAdd = "Добавить";
 		$settingsTitle = "Список полей";
@@ -164,7 +167,7 @@ class СComplexUserProperty
 			),
 		);
 
-		self::showJsForSetting($strHTMLControlName["NAME"]);
+		self::showJsForSetting($additionalParameters["NAME"]);
 		self::showCssForSetting();
 
 		$result = '<tr><td colspan="2" align="center">
@@ -175,7 +178,7 @@ class СComplexUserProperty
                    <td>Сорт.</td>
                    <td>Тип</td>
                 </tr>';
-		$arSetting = self::prepareSetting($arProperty['SETTINGS']);
+		$arSetting = self::prepareSetting($userField['SETTINGS']);
 		if (!empty($arSetting))
 		{
 			foreach ($arSetting as $code => $arItem)
@@ -183,10 +186,10 @@ class СComplexUserProperty
 				$result .= '
                        <tr valign="top">
                            <td><input type="text" class="inp-code" size="20" value="' . $code . '"></td>
-                           <td><input type="text" class="inp-title" size="35" name="' . $strHTMLControlName["NAME"] . '[' . $code . '_TITLE]" value="' . $arItem['TITLE'] . '"></td>
-                           <td><input type="text" class="inp-sort" size="5" name="' . $strHTMLControlName["NAME"] . '[' . $code . '_SORT]" value="' . $arItem['SORT'] . '"></td>
+                           <td><input type="text" class="inp-title" size="35" name="' . $additionalParameters["NAME"] . '[' . $code . '_TITLE]" value="' . $arItem['TITLE'] . '"></td>
+                           <td><input type="text" class="inp-sort" size="5" name="' . $additionalParameters["NAME"] . '[' . $code . '_SORT]" value="' . $arItem['SORT'] . '"></td>
                            <td>
-                                <select class="inp-type" name="' . $strHTMLControlName["NAME"] . '[' . $code . '_TYPE]">
+                                <select class="inp-type" name="' . $additionalParameters["NAME"] . '[' . $code . '_TYPE]">
                                     ' . self::getOptionList($arItem['TYPE']) . '
                                 </select>                        
                            </td>
@@ -214,7 +217,7 @@ class СComplexUserProperty
 		return $result;
 	}
 
-	function PrepareSettings($arUserField)
+	public function PrepareSettings($arUserField)
 	{
 		$result = [];
 		if (!empty($arUserField['SETTINGS']))
@@ -259,10 +262,10 @@ class СComplexUserProperty
 		}
 		if (!empty($fileId))
 		{
-			$arPicture = CFile::GetByID($fileId)->Fetch();
+			$arPicture = \CFile::GetByID($fileId)->Fetch();
 			if ($arPicture)
 			{
-				$strImageStorePath = COption::GetOptionString('main', 'upload_dir', 'upload');
+				$strImageStorePath = \COption::GetOptionString('main', 'upload_dir', 'upload');
 				$sImagePath = '/' . $strImageStorePath . '/' . $arPicture['SUBDIR'] . '/' . $arPicture['FILE_NAME'];
 				$fileType = self::getExtension($sImagePath);
 
@@ -274,18 +277,18 @@ class СComplexUserProperty
 				{
 					$content = '<div class="mf-file-name">' . $arPicture['FILE_NAME'] . '</div>';
 				}
-				if ( CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
+				if ( \CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
 				{
 					$inputName = $strHTMLControlName['NAME'] . '[' . $code . ']';
-					$data = CFileInput::Show(
+					$data = \CFileInput::Show(
 						$inputName,
 						$fileId,
 						array(
 							"PATH" => "Y",
 							"IMAGE" => "Y",
 							"MAX_SIZE" => array(
-								"W" => COption::GetOptionString("iblock", "detail_image_size"),
-								"H" => COption::GetOptionString("iblock", "detail_image_size"),
+								"W" => \COption::GetOptionString("iblock", "detail_image_size"),
+								"H" => \COption::GetOptionString("iblock", "detail_image_size"),
 							),
 						),
 						array(
@@ -313,18 +316,18 @@ class СComplexUserProperty
 		else
 		{
 			$data = '';
-			if ( CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
+			if ( \CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
 			{
 				$inputName = $strHTMLControlName['NAME'] . '[' . $code . ']';
-				$data = CFileInput::Show(
+				$data = \CFileInput::Show(
 					$inputName,
 					$fileId,
 					array(
 						"PATH" => "Y",
 						"IMAGE" => "Y",
 						"MAX_SIZE" => array(
-							"W" => COption::GetOptionString("iblock", "detail_image_size"),
-							"H" => COption::GetOptionString("iblock", "detail_image_size"),
+							"W" => \COption::GetOptionString("iblock", "detail_image_size"),
+							"H" => \COption::GetOptionString("iblock", "detail_image_size"),
 						),
 					),
 					array(
@@ -351,7 +354,7 @@ class СComplexUserProperty
 		$result = false;
 		if (!empty($allValue[$code.'_DEL']) && $allValue[$code.'_DEL'] === 'Y' && !empty($allValue[$code.'_OLD']))
 		{
-			CFile::Delete($allValue[$code.'_OLD']);
+			\CFile::Delete($allValue[$code.'_OLD']);
 		}
 		else if (!empty($allValue[$code.'_OLD']))
 		{
@@ -359,12 +362,12 @@ class СComplexUserProperty
 		}
 		else if (!empty($arValue['name']))
 		{
-			$result = CFile::SaveFile($arValue, 'vote');
+			$result = \CFile::SaveFile($arValue, 'vote');
 		}
 		else if (!empty($arValue) && is_file($_SERVER['DOCUMENT_ROOT'] . $arValue))
 		{
-			$arFile = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . $arValue);
-			$result = CFile::SaveFile($arFile, 'vote');
+			$arFile = \CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . $arValue);
+			$result = \CFile::SaveFile($arFile, 'vote');
 		}
 
 		return $result;
@@ -520,7 +523,7 @@ class СComplexUserProperty
 		$showText = "Показать";
 		$hideText = "Свернуть";
 
-		CJSCore::Init(array("jquery"));
+		\CJSCore::Init(array("jquery"));
 		if (!self::$showedJs)
 		{
 			self::$showedJs = true;
@@ -612,7 +615,7 @@ class СComplexUserProperty
 
 	private static function showJsForSetting($inputName)
 	{
-		CJSCore::Init(array("jquery"));
+		\CJSCore::Init(array("jquery"));
 		?>
 		<script>
 			function addNewRows() {
