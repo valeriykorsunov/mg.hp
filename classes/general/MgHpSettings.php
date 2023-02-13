@@ -27,19 +27,7 @@ class MgHpSettings
 			}
 			elseif ($obCache->StartDataCache())
 			{
-				//				if ( defined('BX_COMP_MANAGED_CACHE') && is_object($GLOBALS['CACHE_MANAGER']) )
-				//				{				
-				//					global $CACHE_MANAGER;
-				//					$CACHE_MANAGER->StartTagCache( "mg.hp" );
-				//				}
-
 				$arResult = self::__GetFields();
-
-
-				//				if ( defined('BX_COMP_MANAGED_CACHE') && is_object($GLOBALS['CACHE_MANAGER']) )
-				//				{
-				//					$CACHE_MANAGER->EndTagCache( "mg.hp" );
-				//				}
 
 				$obCache->EndDataCache($arResult);
 			}
@@ -63,7 +51,14 @@ class MgHpSettings
 
 		foreach ($arUserFields as $FIELD_NAME => $arUserField)
 		{
-			$arResult[$FIELD_NAME] = $arUserField['VALUE'];
+			if($arUserField["USER_TYPE_ID"] == "complex.property")
+			{
+				$arResult[$FIELD_NAME] = \MG\HP\Main\CComplexUserProperty::decodeValue($arUserField['VALUE']);
+			}
+			else
+			{
+				$arResult[$FIELD_NAME] = $arUserField['VALUE'];
+			}
 		}
 
 		return $arResult;

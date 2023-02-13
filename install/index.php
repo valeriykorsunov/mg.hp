@@ -40,8 +40,6 @@ class mg_hp extends CModule
             unset($eventManager);
             ModuleManager::registerModule($this->MODULE_ID);
 
-            // RegisterModuleDependences("main", "OnUserTypeBuildList", "mg.hp", "СComplexUserProperty", "getDescription");
-
             Loader::includeModule($this->MODULE_ID);
             $this->InstallDB();
             $this->editHandler("install");
@@ -74,8 +72,6 @@ class mg_hp extends CModule
 
             $this->editHandler("uninstall");
             $this->editFiles("uninstall");
-
-            // UnRegisterModuleDependences("main", "OnUserTypeBuildList", "mg.hp", "СComplexUserProperty", "getDescription");
 			
             unset($eventManager);
             ModuleManager::unRegisterModule($this->MODULE_ID);
@@ -138,6 +134,7 @@ class mg_hp extends CModule
         $listHandler = array(
             ["ModuleId" => "main", "Event" => "onPageStart", "EventHandler"=> 'MG\HP\Main\EventHandler', "Sort" => "100"],
             ["ModuleId" => "main", "Event" => "OnEpilog", "EventHandler"=> 'MG\HP\Main\EventHandler', "Sort" => "100"],
+            ["ModuleId" => "main", "Event" => "OnUserTypeBuildList", "EventHandler"=> 'MG\HP\Main\CComplexUserProperty', "to_method"=> "getUserTypeDescription", "Sort" => "100"],
             ["ModuleId" => "main", "Event" => "OnUserTypeBuildList", "EventHandler"=> 'MG\HP\Main\CCustomTypeHtml', "to_method"=> "GetUserTypeDescription", "Sort" => "100"],
         );
 
