@@ -1,5 +1,7 @@
 <?
 
+namespace MG\HP\Main;
+
 use \Bitrix\Main,
     \Bitrix\Main\UserField\Types\StringType,
     \Bitrix\Fileman;
