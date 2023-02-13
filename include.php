@@ -5,6 +5,6 @@
     array(
         // 'Bogdo\Debug' => 'classes/general/Debug.php',
         'MgHpSettings' => 'classes/general/MgHpSettings.php',
-        'CCustomTypeHtml' => 'classes/general/ccustomtypehtml.php'
+        // 'CCustomTypeHtml' => 'classes/general/ccustomtypehtml.php'
     )
 );

@@ -2,9 +2,6 @@
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
-use Bitrix\Main\Event;
-use Bitrix\Main\EventManager;
-use Bitrix\Main\EventResult;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Entity\Base;
 use Bitrix\Main\Localization\Loc;
@@ -12,6 +9,7 @@ use Bitrix\Main\Localization\Loc;
 Loc::loadMessages(__FILE__);
 class mg_hp extends CModule
 {
+	public $NAME_DIRECTORY;
 
     function __construct()
     {
@@ -39,8 +37,6 @@ class mg_hp extends CModule
         global $APPLICATION;
         if ($this->isVersionD7() && $this->isVersionPhp())
         {
-            $eventManager = \Bitrix\Main\EventManager::getInstance();
-            $eventManager->registerEventHandler('main', 'OnUserTypeBuildList', 'mg.hp', 'CCustomTypeHtml', 'GetUserTypeDescription');
             unset($eventManager);
             ModuleManager::registerModule($this->MODULE_ID);
 
@@ -79,10 +75,8 @@ class mg_hp extends CModule
             $this->editHandler("uninstall");
             $this->editFiles("uninstall");
 
-
             // UnRegisterModuleDependences("main", "OnUserTypeBuildList", "mg.hp", "СComplexUserProperty", "getDescription");
-            $eventManager = \Bitrix\Main\EventManager::getInstance();
-            $eventManager->unRegisterEventHandler('main', 'OnUserTypeBuildList', 'mg.hp', 'CCustomTypeHtml', 'GetUserTypeDescription');
+			
             unset($eventManager);
             ModuleManager::unRegisterModule($this->MODULE_ID);
             $APPLICATION->IncludeAdminFile("UNINSTALL TITLE", $this->GetPath() . "/install/unstep2.php");
@@ -141,12 +135,13 @@ class mg_hp extends CModule
      */
     protected function editHandler(string $typeAction)
     {
-        $listHendler = array(
-            ["ModuleId" => "main", "Event" => "onPageStart", "Sort" => "100"],
-            ["ModuleId" => "main", "Event" => "OnEpilog", "Sort" => "100"],
+        $listHandler = array(
+            ["ModuleId" => "main", "Event" => "onPageStart", "EventHandler"=> 'MG\HP\Main\EventHandler', "Sort" => "100"],
+            ["ModuleId" => "main", "Event" => "OnEpilog", "EventHandler"=> 'MG\HP\Main\EventHandler', "Sort" => "100"],
+            ["ModuleId" => "main", "Event" => "OnUserTypeBuildList", "EventHandler"=> 'MG\HP\Main\CCustomTypeHtml', "to_method"=> "GetUserTypeDescription", "Sort" => "100"],
         );
 
-        foreach ($listHendler as $params)
+        foreach ($listHandler as $params)
         {
             if ($typeAction == "install")
             {
@@ -168,8 +163,8 @@ class mg_hp extends CModule
             $params["ModuleId"],
             $params["Event"],
             $this->MODULE_ID,
-            'MG\HP\Main\EventHandler',
-            $params["Event"],
+            $params["EventHandler"],
+            $params["to_method"]?? $params["Event"],
             $params["Sort"]
         );
         return true;
@@ -182,8 +177,8 @@ class mg_hp extends CModule
             $params["ModuleId"],
             $params["Event"],
             $this->MODULE_ID,
-            'MG\HP\Main\EventHandler',
-            $params["Event"]
+            $params["EventHandler"],
+            $params["to_method"]?? $params["Event"]
         );
         return true;
     }
@@ -196,7 +191,7 @@ class mg_hp extends CModule
      */
     protected function editFiles(string $typeAction)
     {
-        CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/".$this->MY_DIR."/modules/".$this->MODULE_ID."/install/themes/", $_SERVER["DOCUMENT_ROOT"]."/bitrix/themes/", true, true);
+        CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/".$this->NAME_DIRECTORY."/modules/".$this->MODULE_ID."/install/themes/", $_SERVER["DOCUMENT_ROOT"]."/bitrix/themes/", true, true);
 
         $arrayFilePath = [
             ["from" => $this->GetPath() . "/install/admin/", "to" => $_SERVER["DOCUMENT_ROOT"] . "/bitrix/admin", "recursive" => false],
