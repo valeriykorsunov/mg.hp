@@ -113,7 +113,7 @@ class CComplexUserProperty extends BaseType
 		return $result;
 	}
 
-	public function OnBeforeSave($arProperty, $arValue)
+	public static function OnBeforeSave($arProperty, $arValue)
 	{
 		$arFields = self::prepareSetting($arProperty['SETTINGS']);
 		foreach ($arValue as $code => $value)
@@ -217,7 +217,7 @@ class CComplexUserProperty extends BaseType
 		return $result;
 	}
 
-	public function PrepareSettings($arUserField)
+	public static function PrepareSettings($arUserField)
 	{
 		$result = [];
 		if (!empty($arUserField['SETTINGS']))
