@@ -3,6 +3,7 @@
 namespace MG\HP\Main;
 
 use Bitrix\Main\UserField\Types\BaseType;
+
 /**
  * Комплексное пользовательское свойство
  */
@@ -20,18 +21,16 @@ class CComplexUserProperty extends BaseType
 			'BASE_TYPE' => \CUserTypeManager::BASE_TYPE_STRING,
 		);
 	}
-	
+
 	public static function decodeValue($value)
 	{
-		if(is_array($value))
-		{	
-			$arData = array();		
-			foreach($value as $val){
+		if (is_array($value)) {
+			$arData = array();
+			foreach ($value as $val) {
 				$data = htmlspecialcharsback($val);
 				$arData[] = json_decode($data, true);
 			}
-		}
-		else{
+		} else {
 			$value = htmlspecialcharsback($value);
 			$arData = json_decode($value, true);
 		}
@@ -60,51 +59,35 @@ class CComplexUserProperty extends BaseType
 		$clearText = "Удалить";
 		self::showCss();
 		self::showJs();
-		if (!empty($userField['SETTINGS']))
-		{
+		if (!empty($userField['SETTINGS'])) {
 			$arFields = self::prepareSetting($userField['SETTINGS']);
-		}
-		else
-		{
+		} else {
 			return '<span>Не заполнен список полей в настройках свойства </span>';
 		}
 		$result = "";
 		$result .= '<div class="mf-gray"><a class="cl mf-toggle">' . $hideText . '</a>';
-		if ($userField['MULTIPLE'] === 'Y')
-		{
+		if ($userField['MULTIPLE'] === 'Y') {
 			$result .= ' | <a class="cl mf-delete">' . $clearText . '</a></div>';
 		}
 		$result .= '<table class="mf-fields-list active">';
 		$value = array();
 		// decode data
-		if (!empty($additionalParameters['VALUE']))
-		{
+		if (!empty($additionalParameters['VALUE'])) {
 			$arData = self::decodeValue($additionalParameters['VALUE']);
-			foreach ($arData as $code => $val)
-			{
+			foreach ($arData as $code => $val) {
 				$value['VALUE'][$code] = $val;
 			}
 		}
-		foreach ($arFields as $code => $arItem)
-		{
-			if ($arItem['TYPE'] === 'string')
-			{
+		foreach ($arFields as $code => $arItem) {
+			if ($arItem['TYPE'] === 'string') {
 				$result .= self::showString($code, $arItem['TITLE'], $value, $additionalParameters);
-			}
-			else if ($arItem['TYPE'] === 'file')
-			{
+			} else if ($arItem['TYPE'] === 'file') {
 				$result .= self::showFile($code, $arItem['TITLE'], $value, $additionalParameters);
-			}
-			else if ($arItem['TYPE'] === 'text')
-			{
+			} else if ($arItem['TYPE'] === 'text') {
 				$result .= self::showTextarea($code, $arItem['TITLE'], $value, $additionalParameters);
-			}
-			else if ($arItem['TYPE'] === 'date')
-			{
+			} else if ($arItem['TYPE'] === 'date') {
 				$result .= self::showDate($code, $arItem['TITLE'], $value, $additionalParameters);
-			}
-			else if ($arItem['TYPE'] === 'element')
-			{
+			} else if ($arItem['TYPE'] === 'element') {
 				$result .= self::showBindElement($code, $arItem['TITLE'], $value, $additionalParameters);
 			}
 		}
@@ -116,28 +99,21 @@ class CComplexUserProperty extends BaseType
 	public static function OnBeforeSave($arProperty, $arValue)
 	{
 		$arFields = self::prepareSetting($arProperty['SETTINGS']);
-		foreach ($arValue as $code => $value)
-		{
-			if ($arFields[$code]['TYPE'] === 'file')
-			{
-				$arValue[$code] = self::prepareFileToDB($value, $code ,$arValue);
+		foreach ($arValue as $code => $value) {
+			if ($arFields[$code]['TYPE'] === 'file') {
+				$arValue[$code] = self::prepareFileToDB($value, $code, $arValue);
 			}
 		}
 		$isEmpty = true;
-		foreach ($arValue as $v)
-		{
-			if (!empty($v))
-			{
+		foreach ($arValue as $v) {
+			if (!empty($v)) {
 				$isEmpty = false;
 				break;
 			}
 		}
-		if ($isEmpty === false)
-		{
+		if ($isEmpty === false) {
 			$arResult = json_encode($arValue);
-		}
-		else
-		{
+		} else {
 			$arResult = '';
 		}
 
@@ -179,10 +155,8 @@ class CComplexUserProperty extends BaseType
                    <td>Тип</td>
                 </tr>';
 		$arSetting = self::prepareSetting($userField['SETTINGS']);
-		if (!empty($arSetting))
-		{
-			foreach ($arSetting as $code => $arItem)
-			{
+		if (!empty($arSetting)) {
+			foreach ($arSetting as $code => $arItem) {
 				$result .= '
                        <tr valign="top">
                            <td><input type="text" class="inp-code" size="20" value="' . $code . '"></td>
@@ -220,10 +194,8 @@ class CComplexUserProperty extends BaseType
 	public static function PrepareSettings($arUserField)
 	{
 		$result = [];
-		if (!empty($arUserField['SETTINGS']))
-		{
-			foreach ($arUserField['SETTINGS'] as $code => $value)
-			{
+		if (!empty($arUserField['SETTINGS'])) {
+			foreach ($arUserField['SETTINGS'] as $code => $value) {
 				$result[$code] = $value;
 			}
 		}
@@ -248,36 +220,26 @@ class CComplexUserProperty extends BaseType
 	private static function showFile($code, $title, $arValue, $strHTMLControlName)
 	{
 		$result = '';
-		if (!empty($arValue['VALUE'][$code]) && !is_array($arValue['VALUE'][$code]))
-		{
+		if (!empty($arValue['VALUE'][$code]) && !is_array($arValue['VALUE'][$code])) {
 			$fileId = $arValue['VALUE'][$code];
-		}
-		else if (!empty($arValue['VALUE'][$code]['OLD']))
-		{
+		} else if (!empty($arValue['VALUE'][$code]['OLD'])) {
 			$fileId = $arValue['VALUE'][$code]['OLD'];
-		}
-		else
-		{
+		} else {
 			$fileId = '';
 		}
-		if (!empty($fileId))
-		{
+		if (!empty($fileId)) {
 			$arPicture = \CFile::GetByID($fileId)->Fetch();
-			if ($arPicture)
-			{
+			if ($arPicture) {
 				$strImageStorePath = \COption::GetOptionString('main', 'upload_dir', 'upload');
 				$sImagePath = '/' . $strImageStorePath . '/' . $arPicture['SUBDIR'] . '/' . $arPicture['FILE_NAME'];
 				$fileType = self::getExtension($sImagePath);
 
-				if (in_array($fileType, ['png', 'jpg', 'jpeg', 'gif']))
-				{
+				if (in_array($fileType, ['png', 'jpg', 'jpeg', 'gif'])) {
 					$content = '<img src="' . $sImagePath . '">';
-				}
-				else
-				{
+				} else {
 					$content = '<div class="mf-file-name">' . $arPicture['FILE_NAME'] . '</div>';
 				}
-				if ( \CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
+				if (\CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
 				{
 					$inputName = $strHTMLControlName['NAME'] . '[' . $code . ']';
 					$data = \CFileInput::Show(
@@ -312,11 +274,9 @@ class CComplexUserProperty extends BaseType
 					</tr>';
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$data = '';
-			if ( \CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
+			if (\CModule::IncludeModule('fileman')) // $strHTMLControlName["MODE"] === "FORM_FILL" &&
 			{
 				$inputName = $strHTMLControlName['NAME'] . '[' . $code . ']';
 				$data = \CFileInput::Show(
@@ -352,20 +312,13 @@ class CComplexUserProperty extends BaseType
 	private static function prepareFileToDB($arValue, $code, $allValue)
 	{
 		$result = false;
-		if (!empty($allValue[$code.'_DEL']) && $allValue[$code.'_DEL'] === 'Y' && !empty($allValue[$code.'_OLD']))
-		{
-			\CFile::Delete($allValue[$code.'_OLD']);
-		}
-		else if (!empty($allValue[$code.'_OLD']))
-		{
-			$result = $allValue[$code.'_OLD'];
-		}
-		else if (!empty($arValue['name']))
-		{
+		if (!empty($allValue[$code . '_DEL']) && $allValue[$code . '_DEL'] === 'Y' && !empty($allValue[$code . '_OLD'])) {
+			\CFile::Delete($allValue[$code . '_OLD']);
+		} else if (!empty($allValue[$code . '_OLD'])) {
+			$result = $allValue[$code . '_OLD'];
+		} else if (!empty($arValue['name'])) {
 			$result = \CFile::SaveFile($arValue, 'vote');
-		}
-		else if (!empty($arValue) && is_file($_SERVER['DOCUMENT_ROOT'] . $arValue))
-		{
+		} else if (!empty($arValue) && is_file($_SERVER['DOCUMENT_ROOT'] . $arValue)) {
 			$arFile = \CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . $arValue);
 			$result = \CFile::SaveFile($arFile, 'vote');
 		}
@@ -418,11 +371,9 @@ class CComplexUserProperty extends BaseType
 		$v = !empty($arValue['VALUE'][$code]) ? $arValue['VALUE'][$code] : '';
 
 		$elUrl = '';
-		if (!empty($v))
-		{
+		if (!empty($v)) {
 			$arElem = \CIBlockElement::GetList([], ['ID' => $v], false, ['nPageSize' => 1], ['ID', 'IBLOCK_ID', 'IBLOCK_TYPE_ID', 'NAME'])->Fetch();
-			if (!empty($arElem))
-			{
+			if (!empty($arElem)) {
 				$elUrl .= '<a target="_blank" href="/bitrix/admin/iblock_element_edit.php?IBLOCK_ID=' . $arElem['IBLOCK_ID'] . '&ID=' . $arElem['ID'] . '&type=' . $arElem['IBLOCK_TYPE_ID'] . '">' . $arElem['NAME'] . '</a>';
 			}
 		}
@@ -441,8 +392,7 @@ class CComplexUserProperty extends BaseType
 
 	private static function showCss()
 	{
-		if (!self::$showedCss)
-		{
+		if (!self::$showedCss) {
 			self::$showedCss = true;
 ?>
 			<style>
@@ -524,8 +474,7 @@ class CComplexUserProperty extends BaseType
 		$hideText = "Свернуть";
 
 		\CJSCore::Init(array("jquery"));
-		if (!self::$showedJs)
-		{
+		if (!self::$showedJs) {
 			self::$showedJs = true;
 		?>
 			<script>
@@ -653,8 +602,7 @@ class CComplexUserProperty extends BaseType
 
 	private static function showCssForSetting()
 	{
-		if (!self::$showedCss)
-		{
+		if (!self::$showedCss) {
 			self::$showedCss = true;
 		?>
 			<style>
@@ -685,7 +633,7 @@ class CComplexUserProperty extends BaseType
 					min-width: 125px;
 				}
 			</style>
-		<?
+<?
 		}
 	}
 
@@ -700,11 +648,9 @@ class CComplexUserProperty extends BaseType
 			'element' => "Привязка к элементу"
 		];
 
-		foreach ($arOption as $code => $name)
-		{
+		foreach ($arOption as $code => $name) {
 			$s = '';
-			if ($code === $selected)
-			{
+			if ($code === $selected) {
 				$s = 'selected';
 			}
 
@@ -718,40 +664,30 @@ class CComplexUserProperty extends BaseType
 	{
 		$arResult = [];
 
-		foreach ($arSetting as $key => $value)
-		{
-			if (strstr($key, '_TITLE') !== false)
-			{
+		foreach ($arSetting as $key => $value) {
+			if (strstr($key, '_TITLE') !== false) {
 				$code = str_replace('_TITLE', '', $key);
 				$arResult[$code]['TITLE'] = $value;
-			}
-			else if (strstr($key, '_SORT') !== false)
-			{
+			} else if (strstr($key, '_SORT') !== false) {
 				$code = str_replace('_SORT', '', $key);
 				$arResult[$code]['SORT'] = $value;
-			}
-			else if (strstr($key, '_TYPE') !== false)
-			{
+			} else if (strstr($key, '_TYPE') !== false) {
 				$code = str_replace('_TYPE', '', $key);
 				$arResult[$code]['TYPE'] = $value;
 			}
 		}
 
-		if (!function_exists('cmp'))
-		{
-			function cmp($a, $b)
-			{
-				if ($a['SORT'] == $b['SORT'])
-				{
-					return 0;
-				}
-				return ($a['SORT'] < $b['SORT']) ? -1 : 1;
-			}
-		}
-
-		uasort($arResult, 'cmp');
+		uasort($arResult, array('self', 'cmp'));
 
 		return $arResult;
+	}
+
+	static function cmp($a, $b)
+	{
+		if ($a['SORT'] == $b['SORT']) {
+			return 0;
+		}
+		return ($a['SORT'] < $b['SORT']) ? -1 : 1;
 	}
 
 	private static function getExtension($filePath)
