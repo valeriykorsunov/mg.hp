@@ -661,20 +661,18 @@ class CIBlockPropertyCProp
             }
         }
 
-        if(!function_exists('cmp')){
-            function cmp($a, $b)
-            {
-                if ($a['SORT'] == $b['SORT']) {
-                    return 0;
-                }
-                return ($a['SORT'] < $b['SORT']) ? -1 : 1;
-            }
-        }
+		uasort($arResult, array('self', 'cmp'));
 
-        uasort($arResult, 'cmp');
+		return $arResult;
+	}
 
-        return $arResult;
-    }
+	static function cmp($a, $b)
+	{
+		if ($a['SORT'] == $b['SORT']) {
+			return 0;
+		}
+		return ($a['SORT'] < $b['SORT']) ? -1 : 1;
+	}
 
     private static function getOptionList($selected = 'string')
     {
