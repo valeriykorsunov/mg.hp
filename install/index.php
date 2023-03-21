@@ -137,6 +137,9 @@ class mg_hp extends CModule
             ["ModuleId" => "main", "Event" => "OnUserTypeBuildList", "EventHandler"=> 'MG\HP\Main\CComplexUserProperty', "to_method"=> "getUserTypeDescription", "Sort" => "100"],
             ["ModuleId" => "main", "Event" => "OnUserTypeBuildList", "EventHandler"=> 'MG\HP\Main\CCustomTypeHtml', "to_method"=> "GetUserTypeDescription", "Sort" => "100"],
             ["ModuleId" => "iblock", "Event" => "OnIBlockPropertyBuildList", "EventHandler"=> 'MG\HP\Main\CIBlockPropertyCProp', "to_method"=> "GetUserTypeDescription", "Sort" => "100"],
+
+            ["ModuleId" => "iblock", "Event" => "OnIBlockPropertyBuildList", "EventHandler"=> 'MG\HP\Main\CIBlockPropertyCheckbox', "to_method"=> "GetUserTypeDescription", "Sort" => "100"],
+            ["ModuleId" => "iblock", "Event" => "OnIBlockPropertyBuildList", "EventHandler"=> 'MG\HP\Main\CIBlockPropertyCheckboxNum', "to_method"=> "GetUserTypeDescription", "Sort" => "100"],
         );
 
         foreach ($listHandler as $params)
