@@ -82,7 +82,13 @@ class CIBlockPropertyCProp
         if(!empty($value['VALUE'])){
             $result .= '<br>';
 
-            $data = json_decode($value['VALUE'], true);
+			if(\is_string($value['VALUE'])){
+				$data = json_decode($value['VALUE'], true);
+			}
+			elseif(\is_array($value['VALUE'])){
+				$data = $value['VALUE'];
+			}
+
             foreach ($data as $code => $value){
                 $title = $arFields[$code]['TITLE'];
                 $type = $arFields[$code]['TYPE'];
