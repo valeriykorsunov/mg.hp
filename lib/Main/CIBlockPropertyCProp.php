@@ -1,7 +1,7 @@
 <?php
 
 namespace MG\HP\Main;
-
+use CIblock;
 /**Комплексное свойство инфоблока */
 class CIBlockPropertyCProp
 {
@@ -47,23 +47,32 @@ class CIBlockPropertyCProp
         }
         $result .= '<table class="mf-fields-list active">';
 
-
+        static $methodName = "";
         foreach ($arFields as $code => $arItem){
-            if($arItem['TYPE'] === 'string'){
-                $result .= self::showString($code, $arItem['TITLE'], $value, $strHTMLControlName);
+
+            if($arItem['TYPE'] == 'element'){
+                $iblock_id = $arItem['IBLOCK_ID'];
+                $result .= self::showBindElement($code, $arItem['TITLE'], $value, $iblock_id, $strHTMLControlName);
+                continue;
             }
-            else if($arItem['TYPE'] === 'file'){
-                $result .= self::showFile($code, $arItem['TITLE'], $value, $strHTMLControlName);
+            switch ($arItem['TYPE']) {
+                case 'string':
+                    $methodName = 'showString';
+                    break;
+                case 'file':
+                    $methodName = 'showFile';
+                    break;
+                case 'text':
+                    $methodName = 'showTextarea';
+                    break;
+                case 'date':
+                    $methodName = 'showDate';
+                    break;
+                case 'checkbox':
+                    $methodName = 'showCheckbox';
+                    break;
             }
-            else if($arItem['TYPE'] === 'text'){
-                $result .= self::showTextarea($code, $arItem['TITLE'], $value, $strHTMLControlName);
-            }
-            else if($arItem['TYPE'] === 'date'){
-                $result .= self::showDate($code, $arItem['TITLE'], $value, $strHTMLControlName);
-            }
-            else if($arItem['TYPE'] === 'element'){
-                $result .= self::showBindElement($code, $arItem['TITLE'], $value, $strHTMLControlName);
-            }
+            $result .= self::$methodName($code, $arItem['TITLE'], $value, $strHTMLControlName);
         }
 
         $result .= '</table>';
@@ -134,6 +143,7 @@ class CIBlockPropertyCProp
                    <td>Название</td>
                    <td>Сорт.</td>
                    <td>Тип</td>
+                   <td>Инфоблок</td>
                 </tr>';
 
 
@@ -141,6 +151,11 @@ class CIBlockPropertyCProp
 
         if(!empty($arSetting)){
             foreach ($arSetting as $code => $arItem) {
+                if($arItem['TYPE'] == 'element'){
+                    $disabled = '';
+                }else{
+                    $disabled = 'disabled';
+                }
                 $result .= '
                        <tr valign="top">
                            <td><input type="text" class="inp-code" size="20" value="'.$code.'"></td>
@@ -149,7 +164,10 @@ class CIBlockPropertyCProp
                            <td>
                                 <select class="inp-type" name="'.$strHTMLControlName["NAME"].'['.$code.'_TYPE]">
                                     '.self::getOptionList($arItem['TYPE']).'
-                                </select>                        
+                                </select>
+                           </td>
+                           <td>
+                                <input type="text" placeholder="ID инфоблока" name="'.$strHTMLControlName["NAME"].'['.$code.'_IBLOCK_ID]" class="inp-iblock" size="10" value="'.$arItem['IBLOCK_ID'].'" '.$disabled.'/>                 
                            </td>
                        </tr>';
             }
@@ -163,6 +181,7 @@ class CIBlockPropertyCProp
                     <td>
                         <select class="inp-type"> '.self::getOptionList().'</select>                        
                     </td>
+                    <td><input type="text" placeholder="ID инфоблока" class="inp-iblock" size="10" disabled></td>
                </tr>
              </table>   
                 
@@ -446,7 +465,7 @@ class CIBlockPropertyCProp
         return $result;
     }
 
-    public static function showBindElement($code, $title, $arValue, $strHTMLControlName)
+    public static function showBindElement($code, $title, $arValue, $iblock_id, $strHTMLControlName)
     {
         $result = '';
 
@@ -464,8 +483,28 @@ class CIBlockPropertyCProp
                     <td align="right">'.$title.': </td>
                     <td>
                         <input name="'.$strHTMLControlName['VALUE'].'['.$code.']" id="'.$strHTMLControlName['VALUE'].'['.$code.']" value="'.$v.'" size="8" type="text" class="mf-inp-bind-elem">
-                        <input type="button" value="..." onClick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&IBLOCK_ID=0&n='.$strHTMLControlName['VALUE'].'&k='.$code.'\', 900, 700);">&nbsp;
+                        <input type="button" value="..." onClick="jsUtils.OpenWindow(\'/bitrix/admin/iblock_element_search.php?lang=ru&IBLOCK_ID='.$iblock_id.'&n='.$strHTMLControlName['VALUE'].'&k='.$code.'\', 900, 700);">&nbsp;
                         <span>'.$elUrl.'</span>
+                    </td>
+                </tr>';
+
+        return $result;
+    }
+
+    private static function showCheckbox($code, $title, $arValue, $strHTMLControlName)
+    {
+        $result = '';
+
+        $v = !empty($arValue['VALUE'][$code]) ? htmlspecialchars($arValue['VALUE'][$code]) : '';
+        if($v == "Y"){
+            $checked = 'checked';
+        }else{
+            $checked = '';
+        }
+        $result .= '<tr>
+                    <td align="right">'.$title.': </td>
+                    <td>
+                    <input type="checkbox" class="yes-no" value="Y" name="'.$strHTMLControlName['VALUE'].'['.$code.']" '.$checked.' />
                     </td>
                 </tr>';
 
@@ -533,9 +572,14 @@ class CIBlockPropertyCProp
                         $(item).text('');
                     });
 
-                    var checkBoxInputs = $(this).closest('tr').find('input[type="checkbox"]');
-                    $(checkBoxInputs).each(function (i, item) {
+                    var checkBoxInputsFile = $(this).closest('tr').find('input[type="checkbox"]').not('.yes-no');
+                    $(checkBoxInputsFile).each(function (i, item) {
                         $(item).attr('checked', 'checked');
+                    });
+
+                    var checkBoxInputs = $(this).closest('tr').find('input[type="checkbox"].yes-no');
+                    $(checkBoxInputs).each(function (i, item) {
+                        $(item).removeAttr('checked');
                     });
 
                     $(this).closest('tr').hide('slow');
@@ -604,9 +648,18 @@ class CIBlockPropertyCProp
                     '<td><input type="text" class="inp-title" size="35"></td>' +
                     '<td><input type="text" class="inp-sort" size="5" value="500"></td>' +
                     '<td><select class="inp-type"><?=self::getOptionList()?></select></td>' +
+                    '<td><input placeholder="ID инфоблока" disabled type="text" class="inp-iblock" size="10"></td>' +
                     '</tr>');
             }
+            $(document).on('change', '.inp-type', function(){
+                var type = $(this).val();
 
+                if(type == "element"){
+                    $(this).closest('td').siblings('td').children('input.inp-iblock').removeAttr('disabled');
+                }else{
+                    $(this).closest('td').siblings('td').children('input.inp-iblock').attr('disabled', true).val('');
+                }
+            });
 
             $(document).on('change', '.inp-code', function(){
                 var code = $(this).val();
@@ -615,11 +668,13 @@ class CIBlockPropertyCProp
                     $(this).closest('tr').find('input.inp-title').removeAttr('name');
                     $(this).closest('tr').find('input.inp-sort').removeAttr('name');
                     $(this).closest('tr').find('select.inp-type').removeAttr('name');
+                    $(this).closest('tr').find('input.inp-iblock').removeAttr('name');
                 }
                 else{
                     $(this).closest('tr').find('input.inp-title').attr('name', '<?=$inputName?>[' + code + '_TITLE]');
                     $(this).closest('tr').find('input.inp-sort').attr('name', '<?=$inputName?>[' + code + '_SORT]');
                     $(this).closest('tr').find('select.inp-type').attr('name', '<?=$inputName?>[' + code + '_TYPE]');
+                    $(this).closest('tr').find('input.inp-iblock').attr('name', '<?=$inputName?>[' + code + '_IBLOCK_ID]');
                 }
             });
 
@@ -665,6 +720,10 @@ class CIBlockPropertyCProp
                 $code = str_replace('_TYPE', '', $key);
                 $arResult[$code]['TYPE'] = $value;
             }
+            else if(strstr($key, '_IBLOCK_ID') !== false) {
+                $code = str_replace('_IBLOCK_ID', '', $key);
+                $arResult[$code]['IBLOCK_ID'] = $value;
+            }
         }
 
 		uasort($arResult, array('self', 'cmp'));
@@ -688,7 +747,8 @@ class CIBlockPropertyCProp
             'file' => 'Файл',
             'text' => 'Текст',
             'date' => 'Дата/Время',
-            'element' => 'Привязка к элементу'
+            'element' => 'Привязка к элементу',
+            'checkbox' => 'Да/Нет'
         ];
 
         foreach ($arOption as $code => $name){
