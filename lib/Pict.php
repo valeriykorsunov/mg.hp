@@ -102,6 +102,9 @@ class Pict
 					$im = imagecreatefromjpeg($_SERVER['DOCUMENT_ROOT'] . $array['SRC']);
 				}
 
+				// возникает когда в папке upload нет файла, но есть ссылка на него в БД
+				if(!$im) return $array;
+
 				imagewebp($im, $_SERVER['DOCUMENT_ROOT'] . $array['WEBP_SRC'], $intQuality);
 
 				imagedestroy($im);
@@ -162,10 +165,10 @@ class Pict
 	 * установить разрешения для изображений
 	 *
 	 * @param  array $sizes Массив вида <pre>[
-	  'min-width: 1366px' => ['1x' => 1366, '2x' => 2732],
-	  'min-width: 768px' => ['1x' => 768, '2x' => 1536],
-	  'other' => ['1x' => 375, '2x' => 750]
-	  ]</pre>
+	 * 'min-width: 1366px' => ['1x' => 1366, '2x' => 2732],
+	 * 'min-width: 768px' => ['1x' => 768, '2x' => 1536],
+	 * 'other' => ['1x' => 375, '2x' => 750]
+	 * ]</pre>
 	 * @return bool
 	 */
 	public static function setPictureSizes($sizes = array())
@@ -189,13 +192,13 @@ class Pict
 	 * @param  bool $ignoreSupport игнорировать поддержку браузером Defaults to `false`
 	 * @return string
 	 */
-	public static function getRetinaElementPictureIn($file, $convertToWebp = true, $ignoreSupport = false, $alt = "")
+	public static function getRetinaElementPictureIn(array $file, $loading="lazy", $alt = "", $convertToWebp = true, $ignoreSupport = false)
 	{
 		$alt = (empty($alt) && $file["DESCRIPTION"])?$file["DESCRIPTION"]:$alt; 
 		$ret = '';
 		foreach (self::$sizes as $media => $size)
 		{
-			if ($media != 'other')
+			if ($media != 'other')	
 			{
 				$x1 = $convertToWebp ? self::getResizeWebpSrc($file, $size['1x'], $size['1x'] * 100, true, 90, $ignoreSupport)
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
@@ -209,10 +212,10 @@ class Pict
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
 				$x2 = $convertToWebp ? self::getResizeWebpSrc($file, $size['2x'], $size['2x'] * 100, true, 90, $ignoreSupport)
 					: self::resizePict($file, $size['1x'], $size['1x'] * 100, true, 90);
-				$ret .= '<img src="' . $x1 . '" srcset="' . $x2 . ' 2x" alt="' . $alt . '">';
+				$ret .= '<img src="' . $x1 . '" srcset="' . $x2 . ' 2x" alt="' . $alt . '" loading="'.$loading.'">';
 			}
 		}
-
+		
 		return $ret;
 	}
 
