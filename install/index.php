@@ -174,7 +174,7 @@ class mg_hp extends CModule
     {
         if (!isset($params["ModuleId"], $params["Event"], $params["Sort"])) return false; // TODO зафиксировать как ошибку.
 
-        \Bitrix\Main\EventManager::getInstance()->unregisterEventHandler(
+        \Bitrix\Main\EventManager::getInstance()->unRegisterEventHandler(
             $params["ModuleId"],
             $params["Event"],
             $this->MODULE_ID,

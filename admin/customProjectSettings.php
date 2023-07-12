@@ -10,7 +10,7 @@ global $USER_FIELD_MANAGER, $APPLICATION;
 Loc::loadMessages(__FILE__);
 IncludeModuleLangFile(__FILE__);
 
-
+$module_id = "mg.hp";
 $RIGHT = $APPLICATION->GetGroupRight($module_id);
 $RIGHT_W = ($RIGHT >= "W");
 $RIGHT_R = ($RIGHT >= "R");
