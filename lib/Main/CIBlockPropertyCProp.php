@@ -1,7 +1,7 @@
 <?php
 
 namespace MG\HP\Main;
-
+use CIblock;
 /**Комплексное свойство инфоблока */
 class CIBlockPropertyCProp
 {
