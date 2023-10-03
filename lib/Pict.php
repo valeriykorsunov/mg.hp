@@ -137,7 +137,7 @@ class Pict
 	}
 
 	/**
-	 * Преобразовать изображение jpeg и png в webp
+	 * Преобразовать изображение jpeg и png в webp + сжатие
 	 *
 	 * @param  array $file Массив описания файла для преобразования (CFile::GetFileArray())
 	 * @param  int $width ширина
@@ -153,6 +153,33 @@ class Pict
 		self::init();
 
 		$file['SRC'] = self::resizePict($file, $width, $height, $isProportional, $intQuality);
+		if ($ignoreSupport || self::$clientSupportWebp)
+		{
+			$file = self::getWebp($file, $intQuality);
+		}
+
+		return @$file['WEBP_SRC'] ? $file['WEBP_SRC'] : $file['SRC'];
+	}
+
+	/**
+	 *  Преобразовать изображение jpeg и png в webp - без сжатия
+	 *
+	 * @param array $file Массив описания файла для преобразования (CFile::GetFileArray()) или id файла
+	 * @param  int $intQuality качество преобразования Defaults to 100
+	 * @param  bool $ignoreSupport игнорировать поддержку браузером Defaults to `false`
+	 * @return string src изображения webp или исходного формата
+	 */
+	public static function getWebpSrc($file, $intQuality = 100, $ignoreSupport = false)
+	{
+		self::init();
+		if(!is_array($file)){
+			$file = \CFile::GetFileArray($file);
+		}
+		if(!$file)
+		{
+			return '';
+		}
+		
 		if ($ignoreSupport || self::$clientSupportWebp)
 		{
 			$file = self::getWebp($file, $intQuality);
